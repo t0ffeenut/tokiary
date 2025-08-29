@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>회원 목록</title>
+</head>
+<body>
+<h1>회원 목록</h1>
+
+<a th:href="@{/member/chuga}">회원 등록</a>
+<hr/>
+
+<!-- 검색 -->
+<form method="get" th:action="@{/member/list}">
+    <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
+    <input type="hidden" name="size" th:value="${size}">
+    <button type="submit">검색</button>
+
+</form>
+
+<!-- 목록 -->
+<table border="1" style="margin-top:8px;">
+    <thead>
+    <tr>
+        <th>회원ID</th>
+        <th>닉네임</th>
+        <th>이름</th>
+        <th>생년월일</th>
+        <th>이메일</th>
+        <th>포인트</th>
+        <th>가입일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="member : ${result.content}">
+        <!-- ID -->
+        <td th:text="${member.memberId}"></td>
+
+        <!-- 닉네임: 상세보기 링크 -->
+        <td>
+            <a th:href="@{/member/view/{id}(id=${member.id}, page=${page}, size=${size}, keyword=${keyword})}"
+               th:text="${member.memberNickname}"></a>
+        </td>
+
+        <!-- 이름 -->
+        <td th:text="${member.memberName}"></td>
+
+        <!-- 생년월일 (yyyy-MM-dd) -->
+        <td th:text="${member.memberBirth == null ? '' : #temporals.format(member.memberBirth,'yyyy-MM-dd')}"></td>
+
+        <!-- 이메일 -->
+        <td th:text="${member.memberEmail}"></td>
+
+        <!-- 포인트 -->
+        <td th:text="${member.memberPoint}"></td>
+
+
+        <!-- 가입일(엔티티/DTO에 createDate가 있을 때만 포맷) -->
+        <td th:text="${member.createDate == null ? '' : #temporals.format(member.createDate,'yyyy-MM-dd HH:mm:ss')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이징 -->
+<div style="margin-top:12px;">
+    <!-- 이전 -->
+    <a th:if="${!result.first}"
+       th:href="@{/member/list(page=${page-1}, size=${size}, keyword=${keyword})}">이전</a>
+
+    <!-- 번호 -->
+    <span th:each="i : ${#numbers.sequence(0, result.totalPages - 1)}">
+    <a th:if="${i != page}"
+       th:href="@{/member/list(page=${i}, size=${size}, keyword=${keyword})}"
+       th:text="${i + 1}">1</a>
+    <strong th:if="${i == page}" th:text="${i + 1}">1</strong>
+    <span> </span>
+  </span>
+
+    <!-- 다음 -->
+    <a th:if="${!result.last}"
+       th:href="@{/member/list(page=${page+1}, size=${size}, keyword=${keyword})}">다음</a>
+</div>
+<a th:href="@{/member/list}">전체목록</a>
+</body>
+</html>

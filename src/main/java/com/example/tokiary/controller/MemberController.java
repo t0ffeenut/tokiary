@@ -1,0 +1,238 @@
+package com.example.tokiary.controller;
+
+import com.example.tokiary.dto.MemberDTO;
+import com.example.tokiary.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/member")
+public class MemberController {
+
+    private final MemberService memberService;
+
+    // 목록
+    @GetMapping("list")
+    public String list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            Model model,
+            HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            return "redirect:/login";
+        }
+
+        String memberRank = (String) session.getAttribute("memberRank");
+        if ("1".equals(memberRank)) {
+            return "redirect:/home";
+        }
+        */
+
+        Page<MemberDTO> result = (keyword != null && !keyword.isEmpty())
+                ? memberService.searchPage(keyword, page, size)
+                : memberService.getPageAll(page, size);
+
+        model.addAttribute("result", result);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+
+        return "member/list";
+    }
+
+    // 상세보기
+    @GetMapping("/view/{id}")
+    public String view(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            Model model,
+            HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            return "redirect:/login";
+        }
+
+        String memberRank = (String) session.getAttribute("memberRank");
+        if ("1".equals(memberRank)) {
+            return "redirect:/home";
+        }
+        */
+
+        MemberDTO member = memberService.getSelectOne(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원 없음: " + id));
+
+        model.addAttribute("member", member);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        return "member/view";
+    }
+
+    // 추가 폼
+    @GetMapping("/chuga")
+    public String chuga(Model model) {
+        model.addAttribute("member", new MemberDTO());
+        return "member/chuga";
+    }
+
+    // 추가 처리
+    @PostMapping("/chugaProc")
+    public String chugaProc(@ModelAttribute MemberDTO memberDTO,
+                            @RequestParam(required = false) String keyword,
+                            RedirectAttributes redirectAttributes,
+                            HttpServletRequest request) {
+
+        if (memberService.existsByMemberId(memberDTO.getMemberId())) {
+            redirectAttributes.addFlashAttribute("error", "이미 사용 중인 아이디입니다.");
+            return "redirect:/member/chuga";
+        }
+
+        MemberDTO savedMember = memberService.setInsert(memberDTO);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("id", savedMember.getId());
+        session.setAttribute("loginId", savedMember.getMemberId());
+        session.setAttribute("memberRank", savedMember.getMemberRank());
+        session.setAttribute("loginType", "MEMBER");
+
+        if (keyword != null && !keyword.isEmpty()) {
+            redirectAttributes.addAttribute("keyword", keyword);
+        }
+
+        return "redirect:/home";
+    }
+
+    // 수정 폼
+    @GetMapping("/sujung/{id}")
+    public String sujung(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            Model model,
+            HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            String redirectURL = request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            return "redirect:/login?redirectURL=" + URLEncoder.encode(redirectURL, StandardCharsets.UTF_8);
+        }
+        */
+
+        MemberDTO member = memberService.getSelectOne(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원 없음: " + id));
+        model.addAttribute("member", member);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        return "member/sujung";
+    }
+
+    // 수정 처리
+    @PostMapping("/sujungProc")
+    public String sujungProc(@ModelAttribute MemberDTO memberDTO,
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "10") int size,
+                             @RequestParam(required = false) String keyword,
+                             RedirectAttributes redirectAttributes,
+                             HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            String redirectURL = request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            return "redirect:/login?redirectURL=" + URLEncoder.encode(redirectURL, StandardCharsets.UTF_8);
+        }
+        */
+
+        memberService.setUpdate(memberDTO);
+
+        redirectAttributes.addAttribute("page", page);
+        redirectAttributes.addAttribute("size", size);
+        if (keyword != null && !keyword.isBlank()) {
+            redirectAttributes.addAttribute("keyword", keyword);
+        }
+
+        return "redirect:/member/view/" + memberDTO.getId();
+    }
+
+    // 삭제 폼
+    @GetMapping("/sakje/{id}")
+    public String sakje(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            Model model,
+            HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            String redirectURL = request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            return "redirect:/login?redirectURL=" + URLEncoder.encode(redirectURL, StandardCharsets.UTF_8);
+        }
+        */
+
+        MemberDTO member = memberService.getSelectOne(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "회원 없음: " + id));
+
+        model.addAttribute("member", member);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        return "member/sakje";
+    }
+
+    // 삭제 처리
+    @PostMapping("/sakjeProc")
+    public String sakjeProc(@ModelAttribute MemberDTO memberDTO,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(required = false) String keyword,
+                            RedirectAttributes redirectAttributes,
+                            HttpServletRequest request) {
+
+        // ✅ 로그인 세션 확인 (테스트 위해 주석 처리)
+        /*
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("loginId") == null) {
+            String redirectURL = request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+            return "redirect:/login?redirectURL=" + URLEncoder.encode(redirectURL, StandardCharsets.UTF_8);
+        }
+        */
+
+        memberService.setDeleteByMemberId(memberDTO.getId());
+        redirectAttributes.addAttribute("page", page);
+        redirectAttributes.addAttribute("size", size);
+        if (keyword != null && !keyword.isBlank())
+            redirectAttributes.addAttribute("keyword", keyword);
+        return "redirect:/home";
+    }
+}

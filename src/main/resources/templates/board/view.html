@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 상세</title>
+</head>
+<body>
+<h1>게시판 상세</h1>
+
+<!-- 페이지 이동용 hidden 값 -->
+<input type="hidden" name="page" th:value="${page}">
+<input type="hidden" name="size" th:value="${size}">
+<input type="hidden" name="keyword" th:value="${keyword}">
+
+<p>번호: <span th:text="${board.id}"></span></p>
+<p>제목: <span th:text="${board.title}"></span></p>
+<p>작성자: <span th:text="${board.writer}"></span></p>
+<p>내용: <span th:text="${board.content}"></span></p>
+<p>작성일: <span th:text="${#temporals.format(board.createDate,'yyyy-MM-dd HH:mm')}"></span></p>
+
+<hr>
+<!-- ✅ 목록 버튼은 항상 보임 -->
+<a th:href="@{/board/list(page=${page}, size=${size}, keyword=${keyword})}">목록</a>
+
+<!-- ✅ 로그인 한 경우만 수정/삭제 영역 표시 -->
+<span th:if="${session.loginId != null}">
+
+    <!-- 일반회원: 자기 글일 때만 -->
+    <span th:if="${session.memberRank == '1' and board.writer == session.loginId}">
+        | <a th:href="@{/board/sujung/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}">수정</a>
+        | <a th:href="@{/board/sakje/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}">삭제</a>
+    </span>
+
+    <!-- 관리자(2,3): 모든 글 수정/삭제 가능 -->
+    <span th:if="${session.memberRank == '2' or session.memberRank == '3'}">
+        | <a th:href="@{/board/sujung/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}">수정</a>
+        | <a th:href="@{/board/sakje/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}">삭제</a>
+    </span>
+
+</span>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 목록</title>
+</head>
+<body>
+<h1>학생 목록</h1>
+
+<!-- 학생 등록 -->
+<a th:href="@{/student/chuga}">학생 등록</a>
+<br><br>
+
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>학번</th>
+        <th>이름</th>
+        <th>학년</th>
+        <th>반</th>
+        <th>번호</th>
+        <th>관리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${result}">
+        <td th:text="${student.id}"></td>
+        <td th:text="${student.studentNo}"></td>
+        <td>
+            <!-- 이름 누르면 상세보기로 이동 -->
+            <a th:href="@{|/student/view/${student.id}|}" th:text="${student.studentName}"></a>
+        </td>
+        <td th:text="${student.gradeLevel}"></td>
+        <td th:text="${student.classNo}"></td>
+        <td th:text="${student.studentNumber}"></td>
+        <td>
+            <a th:href="@{|/student/sujung/${student.id}|}">수정</a> |
+            <a th:href="@{|/student/sakje/${student.id}|}">삭제</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

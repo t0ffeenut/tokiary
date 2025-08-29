@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en " xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 삭제</title>
+</head>
+<body>
+<h1>학생 삭제 확인</h1>
+
+<div th:if="${student != null}">
+    <p><strong>학번:</strong> <span th:text="${student.studentNo}"></span></p>
+    <p><strong>이름:</strong> <span th:text="${student.studentName}"></span></p>
+    <p><strong>반:</strong> <span th:text="${student.classNo}"></span> /
+        <strong>번호:</strong> <span th:text="${student.studentNumber}"></span></p>
+    <p><strong>연락처:</strong> <span th:text="${student.studentPhone}"></span></p>
+    <p><strong>주소:</strong> <span th:text="${student.studentAddress}"></span></p>
+</div>
+
+<hr>
+
+<form th:action="@{/student/sakjeProc}" method="post">
+    <!-- 삭제할 학생 PK -->
+    <input type="hidden" name="id" th:value="${student.id}">
+
+    <p>정말 이 학생 정보를 삭제하시겠습니까?</p>
+    <button type="submit">삭제</button>
+    <button type="button" th:onclick="|location.href='@{/student/view/{id}(id=${student.id})}'|">취소</button>
+</form>
+
+</body>
+</html>

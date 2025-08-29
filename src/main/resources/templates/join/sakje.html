@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>회원 탈퇴</h1>
+
+<p>정말로 탈퇴하시겠습니까?</p>
+
+<form th:action="@{/join/sakjeProc}" method="post">
+    <input type="hidden" name="id" th:value="${member.id}">
+    <input type="hidden" name="memberId" th:value="${member.memberId}">
+    <input type="hidden" name="keyword" th:value="${keyword}">
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
+
+    <button type="submit">탈퇴하기</button>
+    <a th:href="@{/join/sujung/{id}(id=${member.id}, page=${page}, size=${size}, keyword=${keyword})}">취소</a>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+</head>
+<body>
+<h1>상품 목록</h1>
+
+<!-- ✅ 로그인 상태에서만 상품 등록 가능 -->
+<a th:if="${session.loginId != null}" th:href="@{/product/chuga}">상품 등록</a>
+<hr>
+
+<!-- ✅ 로그인 상태에서만 로그아웃 버튼 보이게 -->
+<form th:if="${session.loginId != null}" th:action="@{/login/logout}" method="get">
+    <button type="submit">로그아웃</button>
+</form>
+
+<!-- ✅ 검색 -->
+<form method="get" action="/product/list">
+    <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
+    <input type="hidden" name="size" th:value="${size}">
+    <button type="submit">검색</button>
+</form>
+
+<table border="1">
+    <tr>
+        <th>ID</th><th>제품명</th><th>제품금액</th><th>제품설명</th><th>제품등록날짜</th>
+    </tr>
+    <tr th:each="product : ${result.content}">
+        <td th:text="${product.id}"></td>
+        <td>
+            <a th:href="@{/product/view/{id}(id=${product.id}, page=${page}, size=${size}, keyword=${keyword})}"
+               th:text="${product.title}"></a>
+        </td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.content}"></td>
+        <td th:text="${#temporals.format(product.createDate,'yyyy-MM-dd HH:mm')}"></td>
+
+    </tr>
+</table>
+
+<!-- ✅ 페이저: 이전 / 번호 / 다음 -->
+<div style="margin-top:12px;">
+    <!-- 이전 -->
+    <a th:if="${!result.first}"
+       th:href="@{/product/list(page=${page-1}, size=${size}, keyword=${keyword})}">이전</a>
+
+    <!-- 번호(0-based → 화면은 +1) -->
+    <span th:each="i : ${#numbers.sequence(0, result.totalPages - 1)}">
+        <a th:if="${i != page}"
+           th:href="@{/product/list(page=${i}, size=${size}, keyword=${keyword})}"
+           th:text="${i + 1}">1</a>
+        <strong th:if="${i == page}" th:text="${i + 1}">1</strong>
+        <span> </span>
+    </span>
+
+    <!-- 다음 -->
+    <a th:if="${!result.last}"
+       th:href="@{/product/list(page=${page+1}, size=${size}, keyword=${keyword})}">다음</a>
+</div>
+
+<hr>
+<a th:href="@{/product/list}">전체목록</a> |
+
+<a th:href="@{/home}">홈으로</a>
+
+</body>
+</html>
