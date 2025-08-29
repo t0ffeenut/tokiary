@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 수정</title>
+</head>
+<body>
+<h1>회원 수정</h1>
+
+<form th:action="@{/member/sujungProc}" method="post">
+    <!-- hidden 값 -->
+    <input type="hidden" name="id" th:value="${member.id}">
+    <input type="hidden" name="memberId" th:value="${member.memberId}">
+    <input type="hidden" name="keyword" th:value="${keyword}">
+    <input type="hidden" name="page" th:value="${page}">
+    <input type="hidden" name="size" th:value="${size}">
+
+    닉네임: <input type="text" name="memberNickname" th:value="${member.memberNickname}"><br>
+    비밀번호: <input type="password" name="memberPw" th:value="${member.memberPw}"><br>
+    이름: <input type="text" name="memberName" th:value="${member.memberName}"><br>
+    생년월일: <input type="date" name="memberBirth"
+                 th:value="${member.memberBirth == null ? '' : #temporals.format(member.memberBirth,'yyyy-MM-dd')}"><br>
+    이메일: <input type="email" name="memberEmail" th:value="${member.memberEmail}"><br>
+    주소: <input type="text" name="memberAdd" th:value="${member.memberAdd}"><br>
+    전화번호: <input type="tel" name="memberPhone" th:value="${member.memberPhone}"><br>
+    등급: <input type="text" name="memberRank" th:value="${member.memberRank}"><br>
+    포인트: <input type="number" name="memberPoint" th:value="${member.memberPoint}"><br>
+
+
+    <button type="submit">수정</button>
+</form>
+
+<a th:href="@{/member/view/{id}(id=${member.id}, page=${page}, size=${size}, keyword=${keyword})}">취소</a>
+
+</body>
+</html>

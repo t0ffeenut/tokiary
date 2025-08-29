@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>글 삭제</title>
+</head>
+<body>
+<h1>글 삭제</h1>
+
+<p>정말로 삭제하시겠습니까?</p>
+<form th:action="@{/board/sakjeProc}" method="post">
+  <input type="hidden" name="id" th:value="${board.id}">
+  <input type="hidden" name="keyword" th:value="${keyword}"> <!-- ★ 검색어 유지 -->
+  <input type="hidden" name="page" th:value="${page}">
+  <input type="hidden" name="size" th:value="${size}">
+
+  <button type="submit">삭제</button>
+  <a th:href="@{/board/view/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}">취소</a>
+</form>
+
+</body>
+</html>

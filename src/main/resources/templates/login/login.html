@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><title>로그인</title></head>
+<body>
+<form th:action="@{/login/loginProc}" th:object="${loginRequest}" method="post">
+    <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}">
+    <input type="hidden" name="redirectURL" th:value="${param.redirectURL}" />
+
+
+    <input type="text" th:field="*{userId}" placeholder="아이디">
+    <input type="password" th:field="*{userPw}" placeholder="비밀번호">
+    <button type="submit">로그인</button>
+</form>
+<p th:text="${msg}" style="color:red"></p>
+<form th:action="@{/login/logout}" method="get">
+    <button type="submit">로그아웃</button>
+</form>
+
+</body>
+</html>

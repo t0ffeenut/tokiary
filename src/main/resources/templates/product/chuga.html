@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+</head>
+<body>
+<h1>상품 등록</h1>
+
+<!-- 로그아웃 버튼 -->
+<form th:if="${session.loginId != null}" th:action="@{/login/logout}" method="get">
+    <button type="submit">로그아웃</button>
+</form>
+
+<!-- ✅ action을 /product/chugaProc, th:object를 product로 맞추기 -->
+<form th:action="@{/product/chugaProc}" th:object="${product}" method="post">
+
+
+    <input type="hidden" name="writer">
+    <input type="text" name="title">
+    <input type="number" name="price">
+    <textarea name="content"></textarea>
+
+    <button type="submit">등록</button>
+    <a th:href="@{/product/list}">목록</a>
+</form>
+
+</body>
+</html>

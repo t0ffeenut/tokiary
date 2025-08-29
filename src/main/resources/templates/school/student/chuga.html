@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 등록</title>
+</head>
+<body>
+<h1>학생 등록</h1>
+
+<form th:action="@{/student/chugaProc}" method="post">
+
+    <label>학번: <input type="text" name="studentNo" required>    </label><br>
+    <label>이름: <input type="text" name="studentName" required>    </label><br>
+    <label>생년월일: <input type="date" name="studentBirth">    </label><br>
+    <label>성별: <select name="studentGender">
+            <option value="">선택</option>
+            <option value="M">남</option>
+            <option value="F">여</option>
+        </select>   </label><br>
+    <label>학년: <input type="number" name="gradeLevel" min="1" max="3" required>    </label><br>
+    <label>반:  <input type="number" name="classNo" min="1" required>    </label><br>
+    <label>번호:        <input type="number" name="studentNumber" min="1" required>
+    </label><br>
+
+    <!-- 연락처 -->
+    <label>연락처:
+        <input type="text" name="studentPhone">
+    </label><br>
+
+    <!-- 주소 -->
+    <label>주소:
+        <input type="text" name="studentAddress">
+    </label><br>
+
+    <!-- 버튼 -->
+    <button type="submit">등록하기</button>
+    <button type="button" onclick="location.href='/student/list'">목록으로</button>
+
+</form>
+</body>
+</html>

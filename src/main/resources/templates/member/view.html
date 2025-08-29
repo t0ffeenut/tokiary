@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 상세보기</title>
+</head>
+<body>
+<h1>회원 상세보기</h1>
+
+<!-- 페이지/검색 파라미터는 링크에서 그대로 유지 -->
+<p>회원ID: <span th:text="${member.memberId}"></span></p>
+<p>닉네임: <span th:text="${member.memberNickname}"></span></p>
+<p>이름: <span th:text="${member.memberName}"></span></p>
+<p>생년월일:
+    <span th:if="${member.memberBirth != null}"
+          th:text="${#temporals.format(member.memberBirth, 'yyyy-MM-dd')}"></span>
+</p>
+
+
+
+<p>이메일: <span th:text="${member.memberEmail}"></span></p>
+<p>주소: <span th:text="${member.memberAdd}"></span></p>
+<p>전화번호: <span th:text="${member.memberPhone}"></span></p>
+<p>등급: <span th:text="${member.memberRank}"></span></p>
+<p>포인트: <span th:text="${member.memberPoint}"></span></p>
+<p>가입일:
+    <span th:if="${member.createDate != null}"
+          th:text="${#temporals.format(member.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+</p>
+
+
+<a th:href="@{/member/list(page=${page}, size=${size}, keyword=${keyword})}">목록</a> |
+<a th:href="@{/member/sujung/{id}(id=${member.id}, page=${page}, size=${size}, keyword=${keyword})}">수정</a> |
+<a th:href="@{/member/sakje/{id}(id=${member.id}, page=${page}, size=${size}, keyword=${keyword})}">삭제</a>
+
+</body>
+</html>

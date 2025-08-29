@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>학생 수정</title>
+</head>
+<body>
+<h1>학생 수정</h1>
+
+<form th:action="@{/student/sujungProc}" method="post">
+
+    <!-- PK 값 hidden -->
+    <input type="hidden" name="id" th:value="${student.id}">
+
+    <!-- 학번 -->
+    <label>학번:
+        <input type="text" name="studentNo" th:value="${student.studentNo}" readonly>
+    </label><br>
+
+    <!-- 이름 -->
+    <label>이름:
+        <input type="text" name="studentName" th:value="${student.studentName}" required>
+    </label><br>
+
+    <!-- 생년월일 -->
+    <label>생년월일:
+        <input type="date" name="studentBirth" th:value="${student.studentBirth}">
+    </label><br>
+
+    <!-- 성별 -->
+    <label>성별:
+        <select name="studentGender">
+            <option value="" th:selected="${student.studentGender == null}">선택</option>
+            <option value="M" th:selected="${student.studentGender == 'M'}">남</option>
+            <option value="F" th:selected="${student.studentGender == 'F'}">여</option>
+        </select>
+    </label><br>
+
+    <!-- 학년 -->
+    <label>학년:
+        <input type="number" name="gradeLevel" th:value="${student.gradeLevel}" min="1" max="3" required>
+    </label><br>
+
+    <!-- 반 -->
+    <label>반:
+        <input type="number" name="classNo" th:value="${student.classNo}" min="1" required>
+    </label><br>
+
+    <!-- 번호 -->
+    <label>번호:
+        <input type="number" name="studentNumber" th:value="${student.studentNumber}" min="1" required>
+    </label><br>
+
+    <!-- 연락처 -->
+    <label>연락처:
+        <input type="text" name="studentPhone" th:value="${student.studentPhone}">
+    </label><br>
+
+    <!-- 주소 -->
+    <label>주소:
+        <input type="text" name="studentAddress" th:value="${student.studentAddress}">
+    </label><br>
+
+    <!-- 버튼 -->
+    <button type="submit">수정 완료</button>
+    <button type="button" th:onclick="|location.href='@{/student/view/{id}(id=${student.id})}'|">취소</button>
+
+</form>
+</body>
+</html>

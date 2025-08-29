@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판 목록</title>
+</head>
+<body>
+<h1>게시판 목록</h1>
+
+<!-- ✅ 글 작성: 로그인 한 경우만 -->
+<a th:if="${session.loginId != null}" th:href="@{/board/chuga}">글 작성</a>
+<hr>
+
+<!-- ✅ 검색 -->
+<form method="get" action="/board/list">
+  <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
+  <input type="hidden" name="size" th:value="${size}">
+  <button type="submit">검색</button>
+</form>
+
+<!-- ✅ 로그아웃: 로그인 상태에서만 -->
+<form th:if="${session.loginId != null}" th:action="@{/login/logout}" method="get">
+  <button type="submit">로그아웃</button>
+</form>
+
+<!-- ✅ 게시글 리스트 -->
+<table border="1">
+  <tr>
+    <th>ID</th>
+    <th>제목</th>
+    <th>작성자</th>
+    <th>작성일</th>
+
+  </tr>
+
+  <tr th:each="board : ${result.content}">
+    <td th:text="${board.id}"></td>
+    <td>
+      <a th:href="@{/board/view/{id}(id=${board.id}, page=${page}, size=${size}, keyword=${keyword})}"
+         th:text="${board.title}"></a>
+    </td>
+    <td th:text="${board.writer}"></td>
+    <td th:text="${#temporals.format(board.createDate,'yyyy-MM-dd HH:mm')}"></td>
+
+    </td>
+  </tr>
+</table>
+
+<!-- ✅ 페이징 -->
+<div style="margin-top:12px;">
+  <!-- 이전 -->
+  <a th:if="${!result.first}"
+     th:href="@{/board/list(page=${page-1}, size=${size}, keyword=${keyword})}">이전</a>
+
+  <!-- 번호 -->
+  <span th:each="i : ${#numbers.sequence(0, result.totalPages - 1)}">
+    <a th:if="${i != page}"
+       th:href="@{/board/list(page=${i}, size=${size}, keyword=${keyword})}"
+       th:text="${i + 1}">1</a>
+    <strong th:if="${i == page}" th:text="${i + 1}">1</strong>
+    <span> </span>
+  </span>
+
+  <!-- 다음 -->
+  <a th:if="${!result.last}"
+     th:href="@{/board/list(page=${page+1}, size=${size}, keyword=${keyword})}">다음</a>
+</div>
+
+<hr>
+<a th:href="@{/product/list}">전체목록</a> |
+<a th:href="@{/home}">홈으로</a>
+
+</body>
+</html>

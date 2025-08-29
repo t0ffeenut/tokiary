@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>메인 홈</title>
+</head>
+<body>
+<h1>환영합니다!</h1>
+
+<!-- 로그인 여부에 따라 표시 -->
+<div th:if="${session.loginId != null}">
+
+  <!-- 관리자 전용 메뉴 -->
+  <a th:if="${session.memberRank == '2' or session.memberRank == '3'}"
+     th:href="@{/member/list}">회원 관리</a>
+
+  <p>
+    아이디: <span th:text="${session.loginId}"></span>
+    |
+
+    등급:
+    <span th:switch="${session.memberRank}">
+      <span th:case="'1'">일반회원</span>
+      <span th:case="'2'">중간관리자</span>
+      <span th:case="'3'">최고관리자</span>
+    </span>
+    |
+
+    <!-- 내 정보 보기 (일반회원만 자신의 정보 수정) -->
+    <a th:if="${session.memberRank == '1'}"
+       th:href="@{/join/sujung/{id}(id=${session.id})}">내 정보 수정</a>
+    |
+
+    <!-- 관리자 이상은 회원관리 메뉴에서 접근 -->
+    <a th:if="${session.memberRank == '2' or session.memberRank == '3'}"
+       th:href="@{/member/view/{id}(id=${session.id})}">내 정보 보기</a>
+    |
+
+    <a th:href="@{/login/logout}">로그아웃</a>
+  </p>
+</div>
+
+<!-- 비로그인 상태 -->
+<div th:if="${session.loginId == null}">
+  <a th:href="@{/login}">로그인</a> |
+  <a th:href="@{/join/chuga}">회원가입</a>
+</div>
+
+<!-- 메뉴 -->
+<hr>
+<a th:href="@{/product/list}">상품 리스트 가기</a><br>
+
+<!-- 회원 리스트는 관리자 이상만 보이게 -->
+<a th:if="${session.memberRank == '2' or session.memberRank == '3'}"
+   th:href="@{/member/list}">회원 리스트 가기</a><br>
+
+<a th:href="@{/board/list}">게시판 가기</a><br>
+
+</body>
+</html>

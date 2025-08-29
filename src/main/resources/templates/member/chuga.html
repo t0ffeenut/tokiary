@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 정보 추가</title>
+</head>
+<body>
+<h1>회원 정보 추가</h1>
+
+<form th:action="@{/member/chugaProc}" method="post">
+  <input type="hidden" name="keyword" th:value="${keyword}">
+
+  회원 아이디: <input type="text" name="memberId"><br>
+  회원 닉네임: <input type="text" name="memberNickname"><br>
+  회원 비밀번호 : <input type="password" name="memberPw"><br>
+  회원 이름: <input type="text" name="memberName"><br>
+  회원 생년월일 :<input type="date" name="memberBirth"><br>
+  회원 이메일: <input type="email" name="memberEmail"><br>
+  회원 주소 : <input type="text" name="memberAdd"><br>
+  회원 전화번호 : <input type="tel" name="memberPhone"><br>
+  회원 등급: <input type="text" name="memberRank"><br>
+  회원 포인트: <input type="number" name="memberPoint"><br>
+
+  <button type="submit">등록</button>
+</form>
+
+<a th:href="@{/member/list}">목록</a>
+</body>
+
+</html>
